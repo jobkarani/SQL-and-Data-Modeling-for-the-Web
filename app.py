@@ -22,6 +22,7 @@ app.config.from_object('config')
 db = SQLAlchemy(app)
 
 # TODO: connect to a local postgresql database
+db.init_app(app=app)
 
 #----------------------------------------------------------------------------#
 # Models.
@@ -38,6 +39,7 @@ class Venue(db.Model):
     phone = db.Column(db.String(120))
     image_link = db.Column(db.String(500))
     facebook_link = db.Column(db.String(120))
+    shows = db.relationship('Show', backref = 'venue_id', lazy="dynamic")
 
     # TODO: implement any missing fields, as a database migration using Flask-Migrate
 
@@ -52,6 +54,25 @@ class Artist(db.Model):
     genres = db.Column(db.String(120))
     image_link = db.Column(db.String(500))
     facebook_link = db.Column(db.String(120))
+    shows = db.relationship('Show', backref = 'artist_id', lazy="dynamic")
+
+
+class Show(db.Model):
+  __tablename__ = 'Show'
+
+  id = db.Column(db.Integer, primary_key=True)
+  venue_id = db.Column(db.Integer, db.ForeignKey('Venue.id'))
+  venue_name = db.Column(db.String())
+  artist_id = db.Column(db.Integer, db.ForeignKey('Artist.id'))
+  artist_name = db.Column(db.String())
+  artist_image_link = db.Column(db.String())
+  start_time = db.Column(db.DateTime, nullable=False)
+
+  def __repr__(self):
+    return f'User {self.name}'
+
+
+
 
     # TODO: implement any missing fields, as a database migration using Flask-Migrate
 
@@ -108,7 +129,7 @@ def venues():
       "num_upcoming_shows": 0,
     }]
   }]
-  return render_template('pages/venues.html', areas=data);
+  return render_template('pages/venues.html', areas=data)
 
 @app.route('/venues/search', methods=['POST'])
 def search_venues():
