@@ -126,8 +126,6 @@ class VenueForm(Form):
         'seeking_description'
     )
 
-
-
 class ArtistForm(Form):
     name = StringField(
         'name', validators=[DataRequired()]
@@ -193,7 +191,7 @@ class ArtistForm(Form):
     )
     phone = StringField(
         # TODO implement validation logic for state
-        'phone'
+        'phone', validators=[DataRequired()]
     )
     image_link = StringField(
         'image_link'
